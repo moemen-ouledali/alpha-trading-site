@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alpha Trading</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#070B14; --card:#0F1626; --line:#1E2A40; --orange:#FF8A1F; --orange2:#FFB347; --blue:#1E9BFF; --cyan:#3DE0FF; --green:#22D38A; --red:#FF5470; --text:#E8EEF8; --muted:#8A97AD; }
+  html[data-theme=light] { --bg:#F5F7FB; --card:#FFFFFF; --line:#E1E7F0; --text:#0E1726; --muted:#5D6B82; }
+  html[data-theme=light] nav { background:rgba(245,247,251,.8); }
+  html[data-theme=light] .ticker, html[data-theme=light] .chart-card { background:#fff; }
+  html[data-theme=light] .glow { opacity:.1; }
+  body, nav, .stat, .trade, .step, .feat, .plan { transition:background .4s, color .4s, border-color .4s; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Cairo','Inter',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+  html[lang=en] body { font-family:'Inter','Cairo',sans-serif; }
+  a { color:inherit; text-decoration:none; }
+  .wrap { max-width:1180px; margin:0 auto; padding:0 20px; }
+  .glow { position:fixed; width:600px; height:600px; border-radius:50%; filter:blur(120px); opacity:.18; z-index:-1; animation:float 14s ease-in-out infinite; }
+  @keyframes float { 50% { transform:translate(60px,-40px) scale(1.1); } }
+  .grid-bg { position:fixed; inset:0; z-index:-2; background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px); background-size:56px 56px; opacity:.25; mask-image:radial-gradient(circle at 50% 20%,#000,transparent 75%); }
+
+  nav { position:sticky; top:0; z-index:10; backdrop-filter:blur(14px); background:rgba(7,11,20,.7); border-bottom:1px solid var(--line); }
+  nav .wrap { display:flex; align-items:center; gap:24px; height:70px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px; }
+  .brand img { width:42px; height:42px; border-radius:50%; }
+  .brand span b { color:var(--orange); }
+  .links { display:flex; gap:22px; margin-inline-start:auto; color:var(--muted); font-weight:600; }
+  .links a:hover { color:var(--text); }
+  .lang { border:1px solid var(--line); background:var(--card); color:var(--text); border-radius:10px; padding:7px 12px; font-weight:800; cursor:pointer; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:14px 26px; border-radius:14px; font-weight:800; transition:.25s; cursor:pointer; border:0; font-size:16px; }
+  .btn-main { background:linear-gradient(135deg,var(--orange),var(--orange2)); color:#1A0E00; box-shadow:0 10px 30px -10px var(--orange); }
+  .btn-main:hover { transform:translateY(-3px); box-shadow:0 16px 40px -10px var(--orange); }
+  .btn-ghost { border:1px solid var(--line); background:rgba(255,255,255,.03); color:var(--text); }
+  .btn-ghost:hover { border-color:var(--blue); }
+
+  .ticker { border-bottom:1px solid var(--line); background:#0A1020; overflow:hidden; white-space:nowrap; direction:ltr; }
+  .ticker div { display:inline-block; padding:10px 0; animation:scroll 40s linear infinite; font-family:Inter; font-weight:600; font-size:14px; }
+  .ticker span { margin:0 26px; color:var(--muted); }
+  .ticker .up { color:var(--green); } .ticker .dn { color:var(--red); }
+  @keyframes scroll { to { transform:translateX(-50%); } }
+
+  .hero { padding:80px 0 60px; display:grid; grid-template-columns:1.1fr .9fr; gap:50px; align-items:center; }
+  .pill { display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:99px; background:rgba(34,211,138,.1); color:var(--green); font-weight:700; font-size:14px; border:1px solid rgba(34,211,138,.3); }
+  .pill i { width:8px; height:8px; border-radius:50%; background:var(--green); animation:pulse 1.4s infinite; }
+  @keyframes pulse { 50% { box-shadow:0 0 0 8px rgba(34,211,138,0); } 0% { box-shadow:0 0 0 0 rgba(34,211,138,.6); } }
+  h1 { font-size:clamp(38px,5.6vw,68px); line-height:1.15; font-weight:900; margin:20px 0; }
+  h1 em { font-style:normal; background:linear-gradient(90deg,var(--orange),var(--orange2),var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; background-size:200%; animation:shine 6s linear infinite; }
+  @keyframes shine { to { background-position:200% 0; } }
+  .lead { color:var(--muted); font-size:19px; line-height:1.8; max-width:560px; }
+  .cta { display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; }
+
+  .chart-card { position:relative; background:linear-gradient(160deg,#111a2e,#0B1120); border:1px solid var(--line); border-radius:26px; padding:24px; box-shadow:0 30px 80px -30px rgba(30,155,255,.35); direction:ltr; }
+  .chart-card .top { display:flex; justify-content:space-between; align-items:center; font-family:Inter; }
+  .chart-card .pair { font-weight:800; font-size:18px; } .chart-card .pair small { color:var(--muted); font-weight:600; }
+  .chart-card .price { font-weight:900; font-size:26px; color:var(--green); }
+  svg.chart { width:100%; height:240px; margin-top:12px; }
+  .line { stroke-dasharray:1400; stroke-dashoffset:1400; animation:draw 3s ease forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  .float { position:absolute; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 16px; font-family:Inter; font-weight:800; animation:bob 4s ease-in-out infinite; }
+  .float small { display:block; color:var(--muted); font-weight:600; font-size:12px; }
+  @keyframes bob { 50% { transform:translateY(-12px); } }
+
+  section { padding:70px 0; }
+  .h2 { font-size:clamp(28px,3.6vw,42px); font-weight:900; text-align:center; }
+  .sub { color:var(--muted); text-align:center; margin:12px auto 44px; max-width:620px; font-size:17px; line-height:1.7; }
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .stat { background:var(--card); border:1px solid var(--line); border-radius:22px; padding:28px; text-align:center; transition:.3s; }
+  .stat:hover { transform:translateY(-6px); border-color:var(--orange); }
+  .stat b { display:block; font-family:Inter; font-size:42px; font-weight:900; background:linear-gradient(135deg,var(--orange),var(--orange2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .stat span { color:var(--muted); font-weight:600; }
+
+  .trades { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .trade { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:22px; direction:ltr; font-family:Inter; }
+  .trade .row { display:flex; justify-content:space-between; align-items:center; }
+  .trade .sym { font-weight:900; font-size:20px; }
+  .tag { font-size:12px; font-weight:800; padding:4px 10px; border-radius:8px; }
+  .buy { background:rgba(34,211,138,.12); color:var(--green); } .sell { background:rgba(255,84,112,.12); color:var(--red); }
+  .trade .pnl { font-size:30px; font-weight:900; color:var(--green); margin:14px 0 6px; }
+  .trade .meta { color:var(--muted); font-size:13px; display:flex; justify-content:space-between; }
+  .bar { height:6px; border-radius:6px; background:var(--line); margin-top:14px; overflow:hidden; }
+  .bar i { display:block; height:100%; background:linear-gradient(90deg,var(--blue),var(--cyan)); }
+
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; counter-reset:s; }
+  .step { position:relative; background:var(--card); border:1px solid var(--line); border-radius:22px; padding:30px; }
+  .step::before { counter-increment:s; content:counter(s); position:absolute; top:-18px; inset-inline-start:24px; width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,var(--orange),var(--orange2)); color:#1A0E00; font-weight:900; font-family:Inter; }
+  .step h3 { margin:10px 0 8px; font-size:21px; } .step p { color:var(--muted); line-height:1.7; }
+
+  .feats { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .feat { padding:26px; border-radius:22px; background:linear-gradient(160deg,rgba(30,155,255,.08),transparent); border:1px solid var(--line); }
+  .feat .ic { font-size:30px; } .feat h3 { margin:12px 0 6px; } .feat p { color:var(--muted); line-height:1.6; font-size:15px; }
+
+  .final { text-align:center; background:radial-gradient(circle at 50% 0%,rgba(255,138,31,.25),transparent 60%),var(--card); border:1px solid var(--line); border-radius:30px; padding:60px 24px; }
+  .plans { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-items:stretch; }
+  .plan { background:var(--card); border:1px solid var(--line); border-radius:26px; padding:32px; display:flex; flex-direction:column; }
+  .plan.best { border:2px solid var(--orange); transform:scale(1.04); position:relative; }
+  .plan.best::before { content:attr(data-badge); position:absolute; top:-14px; inset-inline-start:50%; transform:translateX(50%); background:linear-gradient(135deg,var(--orange),var(--orange2)); color:#1A0E00; font-weight:900; font-size:13px; padding:4px 14px; border-radius:99px; }
+  html[dir=ltr] .plan.best::before { transform:translateX(-50%); }
+  .plan h3 { font-size:22px; } .plan .pr { font-family:Inter; font-size:46px; font-weight:900; margin:14px 0 4px; } .plan .pr small { font-size:16px; color:var(--muted); font-weight:600; }
+  .plan ul { list-style:none; margin:18px 0 26px; color:var(--muted); line-height:2.1; } .plan li::before { content:'✓  '; color:var(--green); font-weight:900; }
+  .plan .btn { margin-top:auto; justify-content:center; }
+  .pay { display:grid; grid-template-columns:auto 1fr; gap:36px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:28px; padding:34px; }
+  .pay img { width:210px; height:210px; border-radius:18px; border:1px solid var(--line); background:#fff; padding:8px; }
+  .addr { font-family:Inter; direction:ltr; background:var(--bg); border:1px dashed var(--line); border-radius:12px; padding:12px 14px; margin:14px 0; word-break:break-all; font-weight:700; }
+  .net { display:inline-block; background:rgba(34,211,138,.12); color:var(--green); font-weight:800; padding:4px 12px; border-radius:8px; font-family:Inter; }
+  footer { border-top:1px solid var(--line); padding:30px 0 40px; color:var(--muted); font-size:13px; line-height:1.8; text-align:center; }
+  .demo { display:inline-block; font-size:12px; color:var(--orange2); border:1px dashed var(--orange); border-radius:8px; padding:2px 8px; margin-top:14px; }
+
+  .reveal { opacity:0; transform:translateY(30px); transition:1s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity:1; transform:none; }
+  @media (max-width:900px) { .plans,.pay { grid-template-columns:1fr; } .plan.best { transform:none; } .hero { grid-template-columns:1fr; padding-top:40px; } .links { display:none; } .stats,.feats { grid-template-columns:1fr 1fr; } .trades,.steps { grid-template-columns:1fr; } .float { display:none; } }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="glow" style="background:var(--orange);top:-200px;right:-150px"></div>
+<div class="glow" style="background:var(--blue);bottom:-250px;left:-150px;animation-delay:-7s"></div>
+
+<nav><div class="wrap">
+  <a class="brand" href="#"><img src="logo.png" alt=""><span><b>ALPHA</b> TRADING</span></a>
+  <div class="links"><a href="#results" data-t="nav1"></a><a href="#join" data-t="nav2"></a><a href="#why" data-t="nav3"></a><a href="#plans" data-t="p_t"></a></div>
+  <button class="lang" onclick="setTheme()" id="themeBtn" title="Mode">☀️</button>
+  <button class="lang" onclick="setLang(lang==='ar'?'en':'ar')" id="langBtn">EN</button>
+  <a class="btn btn-main" href="#join" style="padding:10px 18px" data-t="cta"></a>
+</div></nav>
+
+<div class="ticker"><div id="tick"></div></div>
+
+<div class="wrap hero">
+  <div class="reveal">
+    <span class="pill"><i></i><span data-t="live"></span></span>
+    <h1 data-t="h1"></h1>
+    <p class="lead" data-t="lead"></p>
+    <div class="cta"><a class="btn btn-main" href="#join" data-t="cta2"></a><a class="btn btn-ghost" href="#results" data-t="cta3"></a></div>
+  </div>
+  <div class="chart-card reveal">
+    <div class="top"><div class="pair">XAU/USD <small>GOLD · 1H</small></div><div class="price" id="price">2,384.60</div></div>
+    <svg class="chart" viewBox="0 0 500 240" preserveAspectRatio="none">
+      <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#FF8A1F" stop-opacity=".45"/><stop offset="1" stop-color="#FF8A1F" stop-opacity="0"/></linearGradient></defs>
+      <path d="M0 200 L40 185 L80 192 L120 160 L160 170 L200 130 L240 142 L280 105 L320 118 L360 80 L400 92 L440 55 L500 35 L500 240 L0 240Z" fill="url(#g)"/>
+      <path class="line" d="M0 200 L40 185 L80 192 L120 160 L160 170 L200 130 L240 142 L280 105 L320 118 L360 80 L400 92 L440 55 L500 35" fill="none" stroke="#FF8A1F" stroke-width="4" stroke-linejoin="round"/>
+    </svg>
+    <div class="float" style="top:-46px;left:-30px"><small data-t="f1"></small><span style="color:var(--green)">+1,240 pips</span></div>
+    <div class="float" style="bottom:-24px;right:-20px;animation-delay:-2s"><small data-t="f2"></small>87%</div>
+  </div>
+</div>
+
+<section id="results"><div class="wrap">
+  <div class="stats reveal">
+    <div class="stat"><b data-count="25000" data-suffix="+">0</b><span data-t="s1"></span></div>
+    <div class="stat"><b data-count="87" data-suffix="%">0</b><span data-t="s2"></span></div>
+    <div class="stat"><b data-count="3200" data-suffix="+">0</b><span data-t="s3"></span></div>
+    <div class="stat"><b data-count="4" data-suffix="">0</b><span data-t="s4"></span></div>
+  </div>
+  <h2 class="h2 reveal" style="margin-top:80px" data-t="r_t"></h2>
+  <p class="sub reveal" data-t="r_s"></p>
+  <div class="trades" id="trades"></div>
+  <div style="text-align:center"><span class="demo" data-t="demo"></span></div>
+</div></section>
+
+<section id="join"><div class="wrap">
+  <h2 class="h2 reveal" data-t="j_t"></h2>
+  <p class="sub reveal" data-t="j_s"></p>
+  <div class="steps">
+    <div class="step reveal"><h3 data-t="st1"></h3><p data-t="sp1"></p></div>
+    <div class="step reveal"><h3 data-t="st2"></h3><p data-t="sp2"></p></div>
+    <div class="step reveal"><h3 data-t="st3"></h3><p data-t="sp3"></p></div>
+  </div>
+</div></section>
+
+<section id="why"><div class="wrap">
+  <h2 class="h2 reveal" data-t="w_t"></h2>
+  <p class="sub reveal" data-t="w_s"></p>
+  <div class="feats">
+    <div class="feat reveal"><div class="ic">📈</div><h3 data-t="fa"></h3><p data-t="fap"></p></div>
+    <div class="feat reveal"><div class="ic">🎯</div><h3 data-t="fb"></h3><p data-t="fbp"></p></div>
+    <div class="feat reveal"><div class="ic">🎓</div><h3 data-t="fc"></h3><p data-t="fcp"></p></div>
+    <div class="feat reveal"><div class="ic">🤝</div><h3 data-t="fd"></h3><p data-t="fdp"></p></div>
+  </div>
+</div></section>
+
+<section id="plans"><div class="wrap">
+  <h2 class="h2 reveal" data-t="p_t"></h2><p class="sub reveal" data-t="p_s"></p>
+  <div class="plans">
+    <div class="plan reveal"><h3 data-t="pl1"></h3><div class="pr">$29<small data-t="mo"></small></div><ul><li data-t="b1"></li><li data-t="b2"></li><li data-t="b3"></li></ul><a class="btn btn-ghost" href="#pay" data-t="choose"></a></div>
+    <div class="plan best reveal" id="best"><h3 data-t="pl2"></h3><div class="pr">$69<small data-t="q"></small></div><ul><li data-t="b1"></li><li data-t="b2"></li><li data-t="b4"></li><li data-t="b5"></li></ul><a class="btn btn-main" href="#pay" data-t="choose"></a></div>
+    <div class="plan reveal"><h3 data-t="pl3"></h3><div class="pr">$199<small data-t="yr"></small></div><ul><li data-t="b1"></li><li data-t="b4"></li><li data-t="b5"></li><li data-t="b6"></li></ul><a class="btn btn-ghost" href="#pay" data-t="choose"></a></div>
+  </div>
+  <div style="text-align:center"><span class="demo" data-t="demo2"></span></div>
+</div></section>
+
+<section id="pay"><div class="wrap"><div class="pay reveal">
+  <img src="qr.svg" alt="QR TRC20">
+  <div><span class="net">USDT · TRC20</span><h2 style="font-size:30px;margin-top:12px" data-t="pay_t"></h2><p style="color:var(--muted);line-height:1.8" data-t="pay_s"></p>
+  <div class="addr" id="addr">EXAMPLE-TRC20-ADDRESS-REPLACE-ME</div>
+  <button class="btn btn-ghost" onclick="navigator.clipboard.writeText(document.getElementById('addr').textContent);this.textContent='✓'" data-t="copy"></button></div>
+</div></div></section>
+
+<section><div class="wrap"><div class="final reveal">
+  <h2 class="h2" data-t="fin"></h2><p class="sub" data-t="fin_s"></p>
+  <a class="btn btn-main" href="#" data-t="cta2"></a>
+</div></div></section>
+
+<footer><div class="wrap"><div data-t="risk"></div><div style="margin-top:10px">© 2026 Alpha Trading</div></div></footer>
+
+<script>
+const T = {
+  nav1:['النتائج','Results'], nav2:['كيف تنضم','How to join'], nav3:['لماذا نحن','Why us'],
+  cta:['انضم الآن','Join now'], cta2:['انضم إلى القناة 🚀','Join the channel 🚀'], cta3:['شاهد النتائج','See results'],
+  live:['الإشارات مباشرة الآن','Signals live now'],
+  h1:['تداول بذكاء مع <em>ألفا تريدينغ</em>','Trade smarter with <em>Alpha Trading</em>'],
+  lead:['إشارات دقيقة، تحليلات يومية ومجتمع من آلاف المتداولين. كل ما تحتاجه لتبدأ رحلتك في الأسواق في مكان واحد.','Precise signals, daily analysis and a community of thousands of traders. Everything you need to start your market journey, in one place.'],
+  f1:['أرباح هذا الشهر','This month'], f2:['نسبة النجاح','Win rate'],
+  s1:['عضو في القناة','Channel members'], s2:['نسبة نجاح الصفقات','Trade win rate'], s3:['صفقة رابحة','Winning trades'], s4:['سنوات من الخبرة','Years of experience'],
+  r_t:['آخر الأرباح','Latest profits'], r_s:['نتائج حقيقية تُنشر يومياً في القناة بكل شفافية.','Real results, shared daily in the channel with full transparency.'],
+  demo:['أرقام توضيحية — ستُستبدل بالنتائج الحقيقية','Example figures — to be replaced with real results'],
+  j_t:['انضم في 3 خطوات','Join in 3 steps'], j_s:['بدء التداول معنا أسهل مما تتخيل.','Getting started with us is easier than you think.'],
+  st1:['انضم إلى القناة','Join the channel'], sp1:['اضغط على الزر وادخل إلى قناتنا على تيليغرام مجاناً.','Tap the button and join our Telegram channel for free.'],
+  st2:['افتح حسابك','Open your account'], sp2:['سجّل لدى الوسيط المعتمد عبر رابطنا واتبع الخطوات البسيطة.','Register with our partner broker through our link and follow the simple steps.'],
+  st3:['ابدأ بالتداول','Start trading'], sp3:['تابع الإشارات والتحليلات اليومية وطبّقها خطوة بخطوة.','Follow the daily signals and analysis, step by step.'],
+  w_t:['لماذا ألفا تريدينغ؟','Why Alpha Trading?'], w_s:['نجمع بين الخبرة والانضباط والشفافية.','Experience, discipline and transparency.'],
+  fa:['إشارات يومية','Daily signals'], fap:['نقاط دخول وخروج واضحة مع وقف الخسارة.','Clear entries, exits and stop-losses.'],
+  fb:['إدارة المخاطر','Risk management'], fbp:['حماية رأس المال قبل كل شيء.','Protecting your capital comes first.'],
+  fc:['تعليم مستمر','Ongoing education'], fcp:['شروحات ودروس للمبتدئين والمحترفين.','Lessons for beginners and pros.'],
+  fd:['مجتمع ودعم','Community & support'], fdp:['فريق ومجتمع يجيب عن أسئلتك.','A team and community to answer you.'],
+  fin:['جاهز لتبدأ؟','Ready to start?'], fin_s:['انضم إلى آلاف المتداولين الذين يتابعون ألفا تريدينغ كل يوم.','Join thousands of traders who follow Alpha Trading every day.'],
+  p_t:['خطط الاشتراك','Subscription plans'], p_s:['اختر الخطة المناسبة لك وابدأ اليوم.','Pick the plan that fits you and start today.'],
+  pl1:['شهري','Monthly'], pl2:['3 أشهر','Quarterly'], pl3:['سنوي','Yearly'], mo:[' / شهر',' / month'], q:[' / 3 أشهر',' / 3 months'], yr:[' / سنة',' / year'],
+  b1:['إشارات VIP يومية','Daily VIP signals'], b2:['تحليلات السوق','Market analysis'], b3:['دعم عبر تيليغرام','Telegram support'], b4:['جلسات مباشرة','Live sessions'], b5:['دعم أولوية','Priority support'], b6:['دورة تعليمية كاملة','Full trading course'],
+  choose:['اشترك الآن','Subscribe'], demo2:['أسعار توضيحية','Example prices'],
+  pay_t:['الدفع عبر USDT','Pay with USDT'], pay_s:['امسح الرمز أو انسخ العنوان، ثم أرسل لنا إثبات الدفع على تيليغرام لتفعيل اشتراكك. شبكة TRC20 فقط.','Scan the code or copy the address, then send us the payment proof on Telegram to activate your plan. TRC20 network only.'],
+  copy:['نسخ العنوان','Copy address'],
+  risk:['تنبيه: التداول ينطوي على مخاطر عالية وقد يؤدي إلى خسارة رأس المال. النتائج السابقة لا تضمن النتائج المستقبلية.','Risk warning: trading involves high risk and may result in the loss of capital. Past results do not guarantee future results.']
+};
+const trades = [['XAU/USD','BUY','+320 pips','2,361 → 2,393',92],['EUR/USD','SELL','+85 pips','1.0920 → 1.0835',78],['BTC/USD','BUY','+4.8%','63,200 → 66,230',85],['GBP/JPY','SELL','+140 pips','191.40 → 190.00',70],['US30','BUY','+410 pts','38,900 → 39,310',88],['XAU/USD','SELL','+210 pips','2,402 → 2,381',81]];
+document.getElementById('trades').innerHTML = trades.map(t => `<div class="trade reveal"><div class="row"><span class="sym">${t[0]}</span><span class="tag ${t[1]==='BUY'?'buy':'sell'}">${t[1]}</span></div><div class="pnl">${t[2]}</div><div class="meta"><span>${t[3]}</span><span>✓ TP</span></div><div class="bar"><i style="width:${t[4]}%"></i></div></div>`).join('');
+const tk = [['XAU/USD','2,384.60','+0.82%'],['EUR/USD','1.0841','-0.12%'],['BTC/USD','66,230','+2.41%'],['GBP/USD','1.2710','+0.18%'],['US30','39,310','+0.55%'],['USD/JPY','151.20','-0.21%'],['ETH/USD','3,240','+1.70%']];
+const row = tk.map(t => `<span>${t[0]} <b>${t[1]}</b> <b class="${t[2][0]==='+'?'up':'dn'}">${t[2]}</b></span>`).join('');
+document.getElementById('tick').innerHTML = row + row;
+
+let lang = 'ar';
+function setLang(l) {
+  lang = l; const i = l === 'ar' ? 0 : 1;
+  document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-t]').forEach(e => e.innerHTML = T[e.dataset.t][i]);
+  document.getElementById('langBtn').textContent = l === 'ar' ? 'EN' : 'عربي';
+  document.getElementById('best').dataset.badge = l === 'ar' ? 'الأكثر طلباً' : 'Most popular';
+}
+setLang('ar');
+function setTheme(t) {
+  const el = document.documentElement; t = t || (el.dataset.theme === 'light' ? 'dark' : 'light');
+  el.dataset.theme = t; document.getElementById('themeBtn').textContent = t === 'light' ? '🌙' : '☀️';
+  try { localStorage.setItem('theme', t); } catch (e) {}
+}
+try { if (localStorage.getItem('theme') === 'light') setTheme('light'); } catch (e) {}
+
+const io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; e.target.classList.add('in');
+  e.target.querySelectorAll('[data-count]').forEach(c => { const n = +c.dataset.count, t0 = performance.now();
+    const step = now => { const p = Math.min((now - t0) / 1800, 1); c.textContent = Math.round(n * (1 - Math.pow(1 - p, 3))).toLocaleString('en') + c.dataset.suffix; if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step); });
+  io.unobserve(e.target); }), { threshold: .15 });
+document.querySelectorAll('.reveal').forEach(e => io.observe(e));
+
+let p = 2384.6; setInterval(() => { p += (Math.random() - .45) * 1.8; document.getElementById('price').textContent = p.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }, 1500);
+</script>
+</body>
+</html>
